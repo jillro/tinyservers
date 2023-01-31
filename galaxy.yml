@@ -16,3 +16,4 @@ homepage: https://github.com/jillro/tinyservers
 issues: https://github.com/jillro/tinyservers/issues
 build_ignore:
     - run-tests.sh
+    - .gitignore
