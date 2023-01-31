@@ -1,0 +1,18 @@
+namespace: jillro
+name: tinyservers
+version: 1.0.0
+readme: README.md
+authors:
+- Maud Royer <hello@maudroyer.fr>
+description: A role collection for tiny Ubuntu VPS.
+license:
+- BSD-2-Clause
+tags: []
+dependencies:
+    community.general: 6.*
+repository: https://github.com/jillro/tinyservers
+documentation: https://github.com/jillro/tinyservers
+homepage: https://github.com/jillro/tinyservers
+issues: https://github.com/jillro/tinyservers/issues
+build_ignore:
+    - run-tests.sh

@@ -1,0 +1,76 @@
+- name: this is Ubuntu
+  fail:
+    msg: You need to use Ubuntu Server
+  when: ansible_distribution != "Ubuntu"
+
+- name: this is a supported release
+  fail:
+    msg: You need to use one of the supported releases
+  when: ansible_distribution_release not in supported_releases
+
+- name: distro packages are up to date
+  apt:
+    upgrade: dist
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time | default (3600) }}"
+
+- name: essentials packages are installed
+  apt:
+    name:
+      # build tools
+      - build-essential
+      - python3-pip
+      - software-properties-common
+      - apt-transport-https
+      - apt-utils
+      - debconf-utils
+      - git
+      - unzip
+      - net-tools
+      - ufw
+      - sudo
+      # diagnostic tools
+      - mtr
+      - knot-dnsutils
+      - nmap
+      - iftop
+      - htop
+      - vnstat
+      - hping3
+      - nload
+    cache_valid_time: "{{ apt_cache_valid_time | default (3600) }}"
+
+- name: system wide known hosts file exists
+  file:
+    path: /etc/ssh/ssh_known_hosts
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+    modification_time: preserve
+    access_time: preserve
+
+- name: GitHub is in known hosts
+  lineinfile:
+    path: /etc/ssh/ssh_known_hosts
+    regexp: "^github.com "
+    line: "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=="
+
+- name: "fail2ban is {{ enable_fail2ban | bool | ternary('present', 'absent') }}"
+  apt:
+    name: fail2ban
+    state: "{{ enable_fail2ban | bool | ternary('present', 'absent') }}"
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time | default (3600) }}"
+
+- name: journal directory is created
+  file:
+    path: /var/log/journal
+    state: directory
+    group: systemd-journal
+    mode: 02755
+  notify:
+    - restart journald
+
+- import_tasks: focal.yml
+  when: ansible_distribution_release == "focal"

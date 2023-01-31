@@ -1,0 +1,7 @@
+- name: Ensure sudoers file is present
+  copy:
+    src: focal/sudoers
+    dest: /etc/sudoers
+    owner: root
+    group: root
+    mode: 0440
