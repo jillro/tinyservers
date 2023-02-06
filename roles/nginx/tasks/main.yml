@@ -1,0 +1,148 @@
+- name: Latest nginx PPA is activated
+  apt_repository:
+    repo: 'ppa:nginx/stable'
+  when: nginx_latest_ppa|bool
+
+- name: NGINX is installed
+  apt:
+    name:
+      - nginx
+      - nginx-extras
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{apt_cache_valid_time | default (3600)}}"
+
+- name: NGINX is enabled in fail2ban
+  copy:
+    src: fail2ban_nginx.conf
+    dest: /etc/fail2ban/jail.d/nginx.conf
+  notify:
+    - restart fail2ban
+  when: enable_fail2ban and enable_nginx
+
+- name: dhparams are present
+  copy:
+    dest: /etc/nginx/dhparams.pem
+    src: dhparams.pem
+
+- name: mime.types file is present
+  copy:
+    src: mime.types
+    dest: /etc/nginx/mime.types
+  notify:
+    - reload nginx
+
+- name: nginx.conf is present
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - reload nginx
+
+# See https://bugs.mageia.org/show_bug.cgi?id=26397 and https://github.com/Perl/perl5/issues/17154
+- name: perl module on is disabled on focal
+  file:
+    path: /etc/nginx/modules-enabled/50-mod-http-perl.conf
+    state: absent
+  notify:
+    - reload nginx
+  when: ansible_distribution_release == "focal"
+
+- name: helpful includes (*_params) are present
+  copy:
+    src: "{{ item }}"
+    dest: /etc/nginx/{{ item }}
+  loop:
+    - uwsgi_params
+    - proxy_params
+    - fastcgi_params
+  notify:
+    - reload nginx
+
+- name: includes dir is present
+  file:
+    path: /etc/nginx/includes
+    state: directory
+
+- name: letsencrypt_acme_params helper file is present
+  copy:
+    src: letsencrypt_acme_params
+    dest: /etc/nginx/letsencrypt_acme_params
+  register: letsencrypt_includes
+
+- name: default site is disabled
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: basic configuration for letsencrypt is present
+  copy:
+    src: 99-letsencrypt.conf
+    dest: /etc/nginx/sites-available/99-letsencrypt.conf
+  register: letsencrypt_conf
+
+- name: basic configuration for letsencrypt is enabled
+  file:
+    path: /etc/nginx/sites-enabled/99-letsencrypt.conf
+    src: ../sites-available/99-letsencrypt.conf
+    state: link
+
+- name: additional nginx.service configuration is present
+  copy:
+    src: nginx.service.d
+    dest: /etc/systemd/system/
+  notify:
+    - reload systemd
+    - restart nginx
+
+- name: goaccess is available
+  apt:
+    name: goaccess
+    state: latest
+    update_cache: yes
+    cache_valid_time: "{{apt_cache_valid_time | default (3600)}}"
+
+- name: goaccess config file is present
+  copy:
+    src: goaccess.conf
+    dest: /etc/goaccess.conf
+
+- name: /var/www is owned by www-data
+  file:
+    path: /var/www
+    owner: www-data
+    group: www-data
+
+- name: port 80 is open
+  ufw:
+    rule: allow
+    port: "80"
+  when: not cloudflare_protected|bool
+
+- name: port 443 is open
+  ufw:
+    rule: allow
+    port: "443"
+  when: not cloudflare_protected|bool
+
+- name: cloudflare ip file is absent
+  file:
+    path: /etc/nginx/conf.d/cloudflare.conf
+    state: absent
+  when: not cloudflare_protected|bool
+
+- name: reload nginx for letsencrypt
+  service:
+    name: nginx
+    state: reloaded
+  when: letsencrypt_includes.changed or letsencrypt_conf.changed
+
+- name: nginx is started and enabled
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+
+- import_tasks: cloudflare.yml
+  when: cloudflare_protected|bool
+  tags: ["cloudflare"]
