@@ -15,20 +15,20 @@
 - name: NGINX is enabled in fail2ban
   copy:
     src: fail2ban_nginx.conf
-    dest: /etc/fail2ban/jail.d/nginx.conf
+    dest: /etc/fail2ban/jail.d/nginx.conf.j2
   notify:
     - restart fail2ban
   when: enable_fail2ban and enable_nginx
 
 - name: dhparams are present
   copy:
-    dest: /etc/nginx/dhparams.pem
+    dest: /etc/nginx/dhparams.pem.j2
     src: dhparams.pem
 
 - name: mime.types file is present
   copy:
     src: mime.types
-    dest: /etc/nginx/mime.types
+    dest: /etc/nginx/mime.types.j2
   notify:
     - reload nginx
 
@@ -50,7 +50,7 @@
 
 - name: helpful includes (*_params) are present
   copy:
-    src: "{{ item }}"
+    src: "{{ item }}.j2"
     dest: /etc/nginx/{{ item }}
   loop:
     - uwsgi_params
@@ -77,7 +77,7 @@
 
 - name: basic configuration for letsencrypt is present
   copy:
-    src: 99-letsencrypt.conf
+    src: 99-letsencrypt.conf.j2
     dest: /etc/nginx/sites-available/99-letsencrypt.conf
   register: letsencrypt_conf
 
@@ -89,8 +89,8 @@
 
 - name: additional nginx.service configuration is present
   copy:
-    src: nginx.service.d
-    dest: /etc/systemd/system/
+    src: extend_file_limit.conf.j2
+    dest: /etc/systemd/system/nginx.service.d/extend_file_limit.conf
   notify:
     - reload systemd
     - restart nginx
@@ -104,7 +104,7 @@
 
 - name: goaccess config file is present
   copy:
-    src: goaccess.conf
+    src: goaccess.conf.j2
     dest: /etc/goaccess.conf
 
 - name: /var/www is owned by www-data
