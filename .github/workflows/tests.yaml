@@ -27,6 +27,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        target:
+          - common
+          - nginx
         ansible:
           - stable-2.12
           - stable-2.13
@@ -54,6 +57,7 @@ jobs:
           ansible-core-version: ${{ matrix.ansible }}
           docker-image: ${{ matrix.target-image }}
           target-python-version: ${{ matrix.target-image == 'ubuntu2004' && '3.8' || '3.10' }}
+          target: ${{ matrix.target }}
           testing-type: integration
           test-deps: >-
             community.general
