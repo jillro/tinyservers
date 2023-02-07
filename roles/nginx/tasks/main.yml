@@ -18,7 +18,7 @@
 
 - name: NGINX is enabled in fail2ban
   copy:
-    src: fail2ban_nginx.conf
+    src: fail2ban_nginx.conf.j2
     dest: /etc/fail2ban/jail.d/nginx.conf.j2
   notify:
     - restart fail2ban
