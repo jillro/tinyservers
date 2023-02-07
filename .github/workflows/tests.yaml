@@ -41,6 +41,13 @@ jobs:
           target-image: ubuntu2204
     runs-on: ubuntu-latest
     steps:
+      - name: Cache pip
+        id: cache-pip
+        uses: actions/cache@v3
+        with:
+          path: .cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.ansible }}
+
       - name: Integration tests
         uses: ansible-community/ansible-test-gh-action@release/v1
         with:
