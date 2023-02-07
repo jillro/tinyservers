@@ -1,3 +1,1 @@
 supported_releases: ["focal", "jammy"]
-enable_fail2ban: yes
-enable_nginx: yes

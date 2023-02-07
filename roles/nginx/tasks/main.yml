@@ -1,4 +1,8 @@
-- name: Latest nginx PPA is activated
+- name: include shared variables
+  import_role:
+    name: shared
+
+- name: latest nginx PPA is activated
   apt_repository:
     repo: 'ppa:nginx/stable'
   when: nginx_latest_ppa|bool
@@ -18,7 +22,7 @@
     dest: /etc/fail2ban/jail.d/nginx.conf.j2
   notify:
     - restart fail2ban
-  when: enable_fail2ban and enable_nginx
+  when: enable_fail2ban
 
 - name: dhparams are present
   copy:

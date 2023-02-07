@@ -1,3 +1,7 @@
+- name: include shared variables
+  import_role:
+    name: shared
+
 - name: this is Ubuntu
   fail:
     msg: You need to use Ubuntu Server
