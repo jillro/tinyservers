@@ -17,22 +17,22 @@
     cache_valid_time: "{{apt_cache_valid_time | default (3600)}}"
 
 - name: NGINX is enabled in fail2ban
-  copy:
+  template:
+    dest: /etc/fail2ban/jail.d/nginx.conf
     src: fail2ban_nginx.conf.j2
-    dest: /etc/fail2ban/jail.d/nginx.conf.j2
   notify:
     - restart fail2ban
   when: enable_fail2ban
 
 - name: dhparams are present
   copy:
-    dest: /etc/nginx/dhparams.pem.j2
-    src: dhparams.pem
+    dest: /etc/nginx/dhparams.pem
+    src: dhparams.pem.j2
 
 - name: mime.types file is present
-  copy:
-    src: mime.types
-    dest: /etc/nginx/mime.types.j2
+  template:
+    src: mime.types.j2
+    dest: /etc/nginx/mime.types
   notify:
     - reload nginx
 
@@ -53,9 +53,9 @@
   when: ansible_distribution_release == "focal"
 
 - name: helpful includes (*_params) are present
-  copy:
-    src: "{{ item }}.j2"
+  template:
     dest: /etc/nginx/{{ item }}
+    src: "{{ item }}.j2"
   loop:
     - uwsgi_params
     - proxy_params
@@ -69,9 +69,9 @@
     state: directory
 
 - name: letsencrypt_acme_params helper file is present
-  copy:
-    src: letsencrypt_acme_params
+  template:
     dest: /etc/nginx/letsencrypt_acme_params
+    src: letsencrypt_acme_params.j2
   register: letsencrypt_includes
 
 - name: default site is disabled
@@ -80,9 +80,9 @@
     state: absent
 
 - name: basic configuration for letsencrypt is present
-  copy:
-    src: 99-letsencrypt.conf.j2
+  template:
     dest: /etc/nginx/sites-available/99-letsencrypt.conf
+    src: 99-letsencrypt.conf.j2
   register: letsencrypt_conf
 
 - name: basic configuration for letsencrypt is enabled
@@ -92,9 +92,9 @@
     state: link
 
 - name: additional nginx.service configuration is present
-  copy:
-    src: extend_file_limit.conf.j2
+  template:
     dest: /etc/systemd/system/nginx.service.d/extend_file_limit.conf
+    src: extend_file_limit.conf.j2
   notify:
     - reload systemd
     - restart nginx
@@ -107,9 +107,9 @@
     cache_valid_time: "{{apt_cache_valid_time | default (3600)}}"
 
 - name: goaccess config file is present
-  copy:
-    src: goaccess.conf.j2
+  template:
     dest: /etc/goaccess.conf
+    src: goaccess.conf.j2
 
 - name: /var/www is owned by www-data
   file:
