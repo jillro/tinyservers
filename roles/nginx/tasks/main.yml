@@ -25,7 +25,7 @@
   when: enable_fail2ban
 
 - name: dhparams are present
-  copy:
+  template:
     dest: /etc/nginx/dhparams.pem
     src: dhparams.pem.j2
 
