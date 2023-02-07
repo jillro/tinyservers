@@ -48,3 +48,5 @@ jobs:
           docker-image: ${{ matrix.target-image }}
           target-python-version: ${{ matrix.target-image == 'ubuntu2004' && '3.8' || '3.10' }}
           testing-type: integration
+          test-deps: >-
+            community.general

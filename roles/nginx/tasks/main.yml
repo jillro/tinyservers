@@ -114,13 +114,13 @@
     group: www-data
 
 - name: port 80 is open
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "80"
   when: not cloudflare_protected|bool
 
 - name: port 443 is open
-  ufw:
+  community.general.ufw:
     rule: allow
     port: "443"
   when: not cloudflare_protected|bool

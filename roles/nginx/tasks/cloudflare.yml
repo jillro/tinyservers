@@ -20,7 +20,7 @@
     dest: "/etc/nginx/conf.d/cloudflare.conf"
 
 - name: 443 and 80 are allowed from Cloudflare IPs
-  ufw:
+  community.general.ufw:
     rule: allow
     direction: in
     from_ip: "{{ item.0 }}"
@@ -28,7 +28,7 @@
   loop: "{{ cloudflare_ips | product([443, 80]) | list }}"
 
 - name: 443 and 80 are disallowed from rest of the world
-  ufw:
+  community.general.ufw:
     delete: yes
     rule: allow
     direction: in
