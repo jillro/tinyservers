@@ -91,6 +91,12 @@
     src: ../sites-available/99-letsencrypt.conf
     state: link
 
+
+- name: directory for additional nginx.service configuration exists
+  file:
+    path: /etc/systemd/system/nginx.service.d
+    state: directory
+
 - name: additional nginx.service configuration is present
   template:
     dest: /etc/systemd/system/nginx.service.d/extend_file_limit.conf
