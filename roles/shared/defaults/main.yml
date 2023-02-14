@@ -1,1 +1,2 @@
 enable_fail2ban: yes
+enable_iptables: yes

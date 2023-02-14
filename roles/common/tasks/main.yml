@@ -79,6 +79,7 @@
 - name: enable ufw
   ufw:
     state: enabled
+  when: enable_iptables
 
 - import_tasks: focal.yml
   when: ansible_distribution_release == "focal"

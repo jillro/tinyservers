@@ -127,13 +127,13 @@
   community.general.ufw:
     rule: allow
     port: "80"
-  when: not cloudflare_protected|bool
+  when: not cloudflare_protected|bool and enable_iptables
 
 - name: port 443 is open
   community.general.ufw:
     rule: allow
     port: "443"
-  when: not cloudflare_protected|bool
+  when: not cloudflare_protected|bool and enable_iptables
 
 - name: cloudflare ip file is absent
   file:
