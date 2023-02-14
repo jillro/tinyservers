@@ -1,0 +1,7 @@
+- name: Run common role
+  import_role:
+    name: common
+
+- name: Run nginx role
+  import_role:
+    name: nginx

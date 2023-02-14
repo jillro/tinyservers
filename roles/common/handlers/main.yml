@@ -3,7 +3,11 @@
     daemon-reload: yes
 
 - name: restart journald
-  service: name=systemd-journald state=restarted
+  service:
+    name: systemd-journald
+    state: restarted
 
 - name: restart fail2ban
-  service: name=fail2ban state=restarted
+  service:
+    name: fail2ban
+    state: restarted

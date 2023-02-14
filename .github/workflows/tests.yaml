@@ -28,8 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          - common
-          - nginx
+          - webserver
         ansible:
           - stable-2.12
           - stable-2.13

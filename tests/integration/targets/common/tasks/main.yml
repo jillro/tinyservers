@@ -1,2 +1,0 @@
-- name: Run common role
-  import_role: common
