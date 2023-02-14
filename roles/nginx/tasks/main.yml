@@ -103,7 +103,7 @@
     src: extend_file_limit.conf.j2
   notify:
     - reload systemd
-    - restart nginx
+    - reload nginx
 
 - name: goaccess is available
   apt:

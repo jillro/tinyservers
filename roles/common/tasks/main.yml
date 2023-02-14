@@ -76,5 +76,9 @@
   notify:
     - restart journald
 
+- name: enable ufw
+  ufw:
+    state: enabled
+
 - import_tasks: focal.yml
   when: ansible_distribution_release == "focal"

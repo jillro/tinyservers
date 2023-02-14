@@ -34,6 +34,3 @@
     - ''
     - '6'
 
-- name: enable ufw
-  ufw:
-    state: enabled
