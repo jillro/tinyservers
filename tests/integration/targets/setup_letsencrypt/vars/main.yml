@@ -1,3 +1,3 @@
 letsencrypt_domains: ["example.com", "www.example.com"]
 letsencrypt_email: "hello@example.com"
-letsencrypt_server: http://localhost:14000
+letsencrypt_server: http://localhost:14000/dir
