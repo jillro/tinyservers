@@ -1,3 +1,8 @@
+- name: pebble repo is cloned
+  git:
+    repo: https://github.com/letsencrypt/pebble
+    dest: /opt/pebble
+
 - name: "{{ item }} is installed"
   get_url:
     url: "https://github.com/letsencrypt/pebble/releases/download/v2.3.1/{{ item }}_linux-amd64"
