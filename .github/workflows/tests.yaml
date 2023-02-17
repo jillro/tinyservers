@@ -24,11 +24,21 @@ jobs:
           testing-type: sanity
 
   integration:
+    runs-on: ubuntu-latest
+    services:
+        pebble:
+          image: letsencrypt/pebble
+          env:
+            PEBBLE_VA_NOSLEEP: 1
+            PEBBLE_VA_ALWAYS_VALID: 1
+        challtestsrv:
+           image: letsencrypt/pebble-challtestsrv
     strategy:
       fail-fast: false
       matrix:
         target:
           - webserver
+          - https
         ansible:
           - stable-2.12
           - stable-2.13
@@ -41,7 +51,7 @@ jobs:
           target-image: ubuntu2204
         - ansible: stable-2.13
           target-image: ubuntu2204
-    runs-on: ubuntu-latest
+
     steps:
       - name: Cache pip
         id: cache-pip

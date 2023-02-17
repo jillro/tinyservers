@@ -1,0 +1,2 @@
+letsencrypt_domains: ["example.com", "www.example.com"]
+letsencrypt_server: http://localhost:14000

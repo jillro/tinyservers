@@ -1,0 +1,31 @@
+- name: "{{ item }} is installed"
+  get_url:
+    url: "https://github.com/letsencrypt/pebble/releases/download/v2.3.1/{{ item }}_linux-amd64"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+  with_items:
+    - pebble
+    - pebble-challtestsrv
+
+- name: "{{ item }} service file is installed"
+  template:
+    src: "{{ item }}.service.j2"
+    dest: "/etc/systemd/system/{{ item }}.service"
+  notify:
+    reload systemd
+  with_items:
+    - pebble
+    - pebble-challtestsrv
+
+- name: "{{ item }} service is enabled and started"
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  with_items:
+    - pebble
+    - pebble-challtestsrv
+
+- name: Run letsencrypt role
+  import_role:
+    name: letsencrypt

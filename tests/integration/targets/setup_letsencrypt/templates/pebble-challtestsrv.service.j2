@@ -1,0 +1,9 @@
+[Service]
+ExecStart=/usr/local/bin/pebble-challtestsrv -dnsserver localhost:8053
+Restart=always
+StandardOutput=syslog
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
