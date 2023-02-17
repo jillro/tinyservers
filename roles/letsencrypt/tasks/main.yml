@@ -49,20 +49,6 @@
   notify:
     - reload nginx
 
-- name: domains point to localhost in hosts
-  lineinfile:
-    path: /etc/hosts
-    regexp: '^127\.0\.0\.1\s+localhost\s(\w*)'
-    line: 127.0.0.1 localhost \1 {{ letsencrypt_domains | join(' ') }}
-    backrefs: yes
-
-- name: domains point to localhost in hosts (ipv6)
-  lineinfile:
-    path: /etc/hosts
-    regexp: '^::1\s+localhost\sip6-localhost\sip6-loopback'
-    line: "::1 localhost ip6-localhost ip6-loopback {{ letsencrypt_domains | join(' ') }}"
-    backrefs: yes
-
 - name: all certificates are generated
   command: "certbot certonly
     --webroot -w /var/www/letsencrypt 
