@@ -1,3 +1,9 @@
+- name: Remove apache2
+  apt:
+    name: apache2
+    state: absent
+    purge: yes
+
 - name: Run common role
   import_role:
     name: common
