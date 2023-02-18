@@ -1,7 +1,7 @@
 [Service]
-ExecStart=/usr/local/bin/pebble-challtestsrv
+ExecStart=/usr/local/bin/pebble-challtestsrv -defaultIPv6 ""
 Restart=always
-StandardOutput=syslog
+StandardOutput=journal
 User=root
 Group=root
 

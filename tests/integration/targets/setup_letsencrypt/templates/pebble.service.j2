@@ -1,8 +1,8 @@
 [Service]
-ExecStart=/usr/local/bin/pebble -config /opt/pebble/test/config/pebble-config.json -dnsserver localhost:8053
+ExecStart=/usr/local/bin/pebble -config /opt/pebble/custom-config.json -dnsserver localhost:8053
 WorkingDirectory=/opt/pebble/
 Restart=always
-StandardOutput=syslog
+StandardOutput=journal
 User=root
 Group=root
 

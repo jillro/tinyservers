@@ -3,7 +3,22 @@
     repo: https://github.com/letsencrypt/pebble
     dest: /opt/pebble
 
-- name: "{{ item }} is installed"
+- name: pebble root CA is installed
+  copy:
+      src: /opt/pebble/test/certs/pebble.minica.pem
+      dest: /usr/local/share/ca-certificates/pebble.minica.crt
+      remote_src: yes
+      mode: 0644
+
+- name: pebble custom config is installed
+  copy:
+      src: pebble-config.json
+      dest: /opt/pebble/custom-config.json
+
+- name: pebble root CA is trusted
+  command: update-ca-certificates
+
+- name: peblle is installed
   get_url:
     url: "https://github.com/letsencrypt/pebble/releases/download/v2.3.1/{{ item }}_linux-amd64"
     dest: "/usr/local/bin/{{ item }}"
@@ -12,7 +27,7 @@
     - pebble
     - pebble-challtestsrv
 
-- name: "{{ item }} service file is installed"
+- name: pebble service files are installed
   template:
     src: "{{ item }}.service.j2"
     dest: "/etc/systemd/system/{{ item }}.service"
@@ -22,7 +37,7 @@
     - pebble
     - pebble-challtestsrv
 
-- name: "{{ item }} service is enabled and started"
+- name: pebble services are enabled and started
   service:
     name: "{{ item }}"
     state: started
@@ -31,6 +46,6 @@
     - pebble
     - pebble-challtestsrv
 
-- name: Run letsencrypt role
+- name: run letsencrypt role
   import_role:
     name: letsencrypt
