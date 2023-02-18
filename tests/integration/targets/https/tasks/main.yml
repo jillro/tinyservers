@@ -1,0 +1,9 @@
+- name: example.com certificate exists ?
+  stat:
+    path: /etc/letsencrypt/live/example.com/fullchain.pem
+  register: certificate_file
+
+- name: example.com certificate exists
+  assert:
+    that:
+      - certificate_file.stat.exists == true
